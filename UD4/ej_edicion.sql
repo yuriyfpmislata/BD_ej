@@ -127,6 +127,82 @@ FROM
 	emple
 );
 */
+-- 13. Doblar el salario a todos los empleados del departamento 30. (Utilizar
+-- UPDATE).
+/*
+UPDATE emple
+SET
+	salario = salario * 2
+WHERE
+	dept_no = 30;
+*/
+-- 14. Cambiar todos los empleados del departamento número 30 al
+-- departamento número 20.
+/*
+UPDATE
+	emple
+SET
+	dept_no = 20
+WHERE
+	dept_no = 30;
+*/
+-- 15. Incrementar en un 10% el sueldo de los empleados del departamento 10.
+-- (salario*1.1).
+/*
+UPDATE emple
+SET
+	salario = salario * 1.1
+WHERE
+	dept_no = 10;
+*/
+-- 16. Cambiar la localidad del departamento número 10 a ʻBILBAOʼ.
+/*
+UPDATE depart
+SET
+	loc = 'BILBAO'
+WHERE
+	dept_no = 10;
+*/
+-- 17. Igualar el salario de ʻARROYOʼ al salario de ʻNEGROʼ, de la tabla
+-- EMPLE30.
+/*
+UPDATE emple
+SET
+	salario = (
+		SELECT
+			salario
+		FROM
+			emple30
+		WHERE
+			apellido = 'NEGRO'
+    )
+WHERE
+	apellido = 'ARROYO';
+*/
+-- 18. Igualar el salario y oficio de ʻMUÑOZʼ al salario y oficio de ʻJIMENOʼ, de la
+-- tabla EMPLE30.
+/*
+UPDATE emple
+SET
+	salario = (
+		SELECT
+			salario
+		FROM
+			emple30
+		WHERE
+			apellido = 'JIMENO'
+    ),
+    oficio = (
+		SELECT
+			oficio
+		FROM
+			emple30
+		WHERE
+			apellido = 'JIMENO'
+    )
+WHERE
+	apellido = 'MUÑOZ';
+*/
 -- 19. En la tabla DEPART borrar el departamento número 50.
 /*
 DELETE FROM
@@ -150,6 +226,19 @@ DELETE FROM
 WHERE
 	comision IS NULL;
 */
+-- 22. Establecer el número de plazas de todos los hospitales a 250.
+/*
+UPDATE hospitales
+SET
+	num_plazas = 250;
+*/
+-- 23. Poner en 2000 el número de plazas del hospital número 3.
+/*
+UPDATE hospitales
+SET
+	num_plazas = 2000
+WHERE cod_hospital = 1;
+*/
 -- 24. Borra todos los hospitales cuyo nombre comience por la letra ʻRʼ
 /*
 DELETE FROM
@@ -157,7 +246,7 @@ DELETE FROM
 WHERE
 	nombre LIKE 'R%';
 */
--- Mandado: borra equipos pertenecientes a una division que tenga menos de 2 equipos
+-- Mandado: [nba] borra equipos pertenecientes a una division que tenga menos de 2 equipos
 /*
 DELETE FROM
 	equipos
@@ -169,4 +258,82 @@ WHERE Division IN (
 	GROUP BY Division
 	HAVING count(*) < 2
 );
+*/
+-- 25. Con una sentencia UPDATE dobla el número de plazas de todos los
+-- hospitales.
+/*
+UPDATE hospitales
+SET
+	num_plazas = num_plazas * 2;
+*/
+-- 26. Por cada departamento de la tabla EMPLE y DEPART obtener el nombre
+-- del departamento, salario medio, salario máximo y media de salarios. 
+/*
+SELECT
+	depart.dnombre AS 'Nombre',
+    MIN(emple.salario) AS 'Salario mínimo',
+    MAX(emple.salario) AS 'Salario máximo',
+    AVG(emple.salario) AS 'Media de salarios'
+FROM
+	emple
+		RIGHT OUTER JOIN
+	depart ON emple.dept_no = depart.dept_no
+GROUP BY depart.dept_no;
+*/
+-- 27. Visualizar el nombre y número de empleados de cada departamento.
+/*
+SELECT
+	depart.dnombre AS 'Nombre',
+    count(emple.emp_no) AS 'Nº de empleados'
+FROM
+	emple
+		RIGHT OUTER JOIN
+	depart ON emple.dept_no = depart.dept_no
+GROUP BY depart.dept_no;
+*/
+-- 28. Visualizar el nombre y número de empleados de los departamentos que
+-- tengan más de 3 empleados.
+/*
+SELECT
+	depart.dnombre AS 'Nombre',
+    count(emple.emp_no) AS 'Nº de empleados'
+FROM
+	emple
+		RIGHT OUTER JOIN
+	depart ON emple.dept_no = depart.dept_no
+GROUP BY depart.dept_no
+HAVING count(emple.emp_no) > 3;
+*/
+-- 29. Apellidos de los empleados que tengan el mismo oficio que ʻARROYOʼ.
+/*
+SELECT
+	apellido
+FROM
+	emple
+WHERE
+	oficio = (
+		SELECT
+			oficio
+		FROM
+			emple
+		WHERE
+			apellido = 'ARROYO'
+    );
+*/
+-- 30. Apellidos de los empleados que pertenezcan al mismo departamento que
+-- ʻARROYOʼ o ʻREYʼ.
+/*
+SELECT
+	apellido
+FROM
+	emple
+WHERE
+	dept_no = (
+		SELECT
+			dept_no
+		FROM
+			emple
+		WHERE
+			apellido = 'ARROYO'
+    );
 */
