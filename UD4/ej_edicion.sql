@@ -337,3 +337,17 @@ WHERE
 			apellido = 'ARROYO'
     );
 */
+-- Extra: crear tabla basada en un select
+-- nba: crear tabla llamada jugadoreswest con los datos de los jugadores de la conferencia west
+/*
+CREATE TABLE jugadoreswest AS (
+	SELECT
+		jug.*
+	FROM
+		jugadores AS jug
+			INNER JOIN
+		equipos AS eq ON jug.Nombre_equipo = eq.Nombre
+	WHERE
+		eq.Conferencia = 'West'
+);
+*/
