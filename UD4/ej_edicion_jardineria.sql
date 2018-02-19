@@ -58,3 +58,59 @@ WHERE
 			pedidos
     );
 */
+-- 3.	Incrementa en un 20% el precio de los productos que no tengan pedidos
+/*
+UPDATE productos
+SET
+	PrecioVenta = PrecioVenta * 1.2
+WHERE
+	CodigoProducto NOT IN (
+		SELECT DISTINCT
+			CodigoProducto
+		FROM detallepedidos
+	);
+*/
+-- 4.	Borra los pagos del cliente con menor límite de crédito
+/*
+DELETE FROM pagos
+WHERE CodigoCliente IN (SELECT
+	CodigoCliente
+FROM
+	clientes
+WHERE
+	LimiteCredito <= ALL (
+		SELECT
+			LimiteCredito
+		FROM
+			clientes
+    )
+);
+*/
+-- 5.	Establece a 0 el límite de crédito del cliente que menos unidades pedidas tenga del producto ‘OR-179’
+/*
+UPDATE clientes
+SET 
+	LimiteCredito = 0
+WHERE CodigoCliente IN (
+	SELECT
+		pedidos.CodigoCliente
+	FROM
+		detallepedidos
+			INNER JOIN
+		pedidos ON pedidos.CodigoPedido = detallepedidos.CodigoPedido
+	WHERE
+		CodigoProducto = 'OR-179'
+	GROUP BY
+		detallepedidos.CodigoPedido
+	HAVING sum(Cantidad) <= ALL (
+		SELECT
+			sum(Cantidad)
+		FROM
+			detallepedidos
+		WHERE
+			CodigoProducto = 'OR-179'
+		GROUP BY
+			CodigoPedido
+	)
+);
+*/
