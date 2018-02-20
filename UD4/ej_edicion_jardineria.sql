@@ -33,6 +33,9 @@ WHERE
 -- Comentario:
 -- 		No permite cambiar el codigo, ya que en pedidos esta puesto
 -- 		ON UPDATE RESTRICT
+-- De cambiar la condicion:
+--		NULL: cambia el CodigoCliente a NULL en los pedidos y cambia el codigo al nuevo en clientes
+-- 		CASCADE: cambia el CodigoCliente al nuevo codigo en los clientes y en los pedidos
 
 */
 -- f) Borra dicho cliente de la tabla clientes y comenta los cambios 
@@ -44,6 +47,9 @@ WHERE
 -- Comentario:
 -- 		No permite borrar el cliente, ya que en pedidos esta puesto
 -- 		ON DELETE RESTRICT
+-- De cambiar la condicion:
+--		NULL: cambia el CodigoCliente a NULL en los pedidos y borra el cliente
+-- 		CASCADE: borra el cliente y sus correspondientes pedidos
 
 */
 -- 2. Borra los clientes que no tengan pedidos
@@ -52,7 +58,7 @@ DELETE FROM
 	clientes
 WHERE
 	CodigoCliente NOT IN (
-		SELECT
+		SELECT DISTINCT
 			CodigoCliente
 		FROM
 			pedidos
@@ -101,16 +107,53 @@ WHERE CodigoCliente IN (
 	WHERE
 		CodigoProducto = 'OR-179'
 	GROUP BY
-		detallepedidos.CodigoPedido
+		pedidos.CodigoCliente
 	HAVING sum(Cantidad) <= ALL (
 		SELECT
 			sum(Cantidad)
 		FROM
 			detallepedidos
+				INNER JOIN
+			pedidos ON pedidos.CodigoPedido = detallepedidos.CodigoPedido
 		WHERE
 			CodigoProducto = 'OR-179'
 		GROUP BY
-			CodigoPedido
+			pedidos.CodigoCliente
 	)
 );
+*/
+-- 11. A partir de Julio de 2010, el porcentaje de IVA a aplicar sobre los productos pedidos es del 18%, mientras que a los pedidos anteriores se les aplica un 16%. 
+-- Modifica la estructura de la BD jardinería para que esté preparada ante éste y futuros cambios del porcentaje de IVA que marca la ley.
+-- Crea una consulta que valore cada pedido existente, teniendo en cuenta el IVA
+/*
+
+-- añadir columna PorcentajeIVA [DECIMAL(4, 2)] en "pedidos"
+ALTER TABLE `jardineria`.`pedidos` 
+ADD COLUMN `PorcentajeIVA` DECIMAL(4,2) UNSIGNED NOT NULL DEFAULT 0.00  AFTER `CodigoCliente`;
+
+
+-- actualizar porcentaje de los pedidos
+UPDATE pedidos
+SET
+	PorcentajeIVA = 18.0
+WHERE
+	year(FechaPedido) >= 2010;
+
+UPDATE pedidos
+SET
+	PorcentajeIVA = 16.0
+WHERE
+	year(FechaPedido) < 2010;
+    
+-- consulta (basada en la vista v_totalespedidos)
+    SELECT 
+        `detped`.`CodigoPedido` AS `CodigoPedido`,
+        SUM((`detped`.`Cantidad` * `detped`.`PrecioUnidad`)) AS `ImporteTotal`,
+        `ped`.`PorcentajeIVA` AS `Porcentaje IVA`,
+        (SUM((`detped`.`Cantidad` * `detped`.`PrecioUnidad`)) + (SUM((`detped`.`Cantidad` * `detped`.`PrecioUnidad`)) * (`ped`.`PorcentajeIVA` / 100))) AS `ImporteTotalIVA`,
+        `ped`.`CodigoCliente` AS `CodigoCliente`
+    FROM
+        (`detallepedidos` `detped`
+        JOIN `pedidos` `ped` ON ((`ped`.`CodigoPedido` = `detped`.`CodigoPedido`)))
+    GROUP BY `ped`.`CodigoPedido`
 */
