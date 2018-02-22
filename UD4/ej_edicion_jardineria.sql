@@ -157,3 +157,31 @@ WHERE
         JOIN `pedidos` `ped` ON ((`ped`.`CodigoPedido` = `detped`.`CodigoPedido`)))
     GROUP BY `ped`.`CodigoPedido`
 */
+--     12. Borra el cliente que menor límite de crédito tenga. ¿Es posible borrarlo en una sola consulta? ¿Por qué?
+/*
+DELETE FROM clientes
+WHERE 
+	CodigoCliente IN (
+		SELECT
+			CodigoCliente
+		FROM
+			clientes
+		WHERE
+			LimiteCredito <= ALL (
+				SELECT
+					LimiteCredito
+				FROM
+					clientes
+			)
+    );
+
+-- No es posible, porqué no se puede borrar de la misma tabla de la que se está haciendo una subconsulta.
+*/
+-- 13. Reduce en un 5% el precio de los productos que sean más caros de 200 €
+/*
+UPDATE productos
+SET
+	PrecioVenta = PrecioVenta * 0.95
+WHERE
+	PrecioVenta > 200;
+*/
