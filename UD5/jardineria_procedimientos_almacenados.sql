@@ -65,3 +65,92 @@ BEGIN
 	);
 END$$
 */
+-- 15.   Crea una función llamada calificación, que a partir de una nota numérica,
+-- devuelva la calificación alfabética
+/*
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS calificacion$$
+
+CREATE FUNCTION calificacion (
+	nota DECIMAL(4,2)
+) RETURNS VARCHAR(30)
+
+BEGIN
+	DECLARE calAlfabetica VARCHAR(30);
+    
+    CASE
+		WHEN
+			nota >= 0 AND nota < 5
+			THEN
+				SET calAlfabetica = "Insuficiente";
+		WHEN
+			nota >= 5 AND nota < 6
+			THEN
+				SET calAlfabetica = "Suficiente";
+		WHEN
+			nota >= 6 AND nota < 7
+			THEN
+				SET calAlfabetica = "Bien";
+		WHEN
+			nota >= 7 AND nota < 9
+			THEN
+				SET calAlfabetica = "Notable";
+		WHEN
+			nota >= 9 AND nota <= 10
+			THEN
+				SET calAlfabetica = "Sobresaliente";
+		ELSE
+			SET
+				calAlfabetica = "???";
+	END CASE;
+    
+	RETURN calAlfabetica;
+END$$
+*/
+-- 16.   Crea una función llamada nombre_mes en la que partiendo de un número de mes,
+-- devuelva el nombre del mes en castellano
+/*
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS nombre_mes$$
+
+CREATE FUNCTION nombre_mes (
+	p_numeroMes INT(2)
+) RETURNS VARCHAR(30)
+
+BEGIN
+	DECLARE v_nombre VARCHAR(30);
+    
+    CASE p_numeroMes
+		WHEN 1 THEN
+			SET v_nombre = "Enero";
+		WHEN 2 THEN
+			SET v_nombre = "Febrero";
+		WHEN 3 THEN
+			SET v_nombre = "Marzo";
+		WHEN 4 THEN
+			SET v_nombre = "Abril";
+		WHEN 5 THEN
+			SET v_nombre = "Mayo";
+		WHEN 6 THEN
+			SET v_nombre = "Junio";
+		WHEN 7 THEN
+			SET v_nombre = "Julio";
+		WHEN 8 THEN
+			SET v_nombre = "Agosto";
+		WHEN 9 THEN
+			SET v_nombre = "Septiembre";
+		WHEN 10 THEN
+			SET v_nombre = "Octubre";
+		WHEN 11 THEN
+			SET v_nombre = "Noviembre";
+		WHEN 12 THEN
+			SET v_nombre = "Diciembre";
+		ELSE
+			SET v_nombre = "!! Fuera de rango";
+	END CASE;
+    
+	RETURN v_nombre;
+END$$
+*/
