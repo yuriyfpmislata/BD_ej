@@ -154,3 +154,166 @@ BEGIN
 	RETURN v_nombre;
 END$$
 */
+-- 17.   Crea una función llamada nombre_mes_cv a la que se envíe un número de mes y
+-- las siglas de la lengua en que se desea (CAS será castellano, VAL será valenciano).
+-- La función devolverá el nombre del mes en la lengua elegida. 
+/*
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS nombre_mes_cv$$
+
+CREATE FUNCTION nombre_mes_cv (
+	p_numeroMes INT(2),
+    p_lengua VARCHAR(3)
+) RETURNS VARCHAR(50)
+
+BEGIN
+	DECLARE v_nombre VARCHAR(50);
+    
+    IF p_lengua = "CAS" THEN
+		CASE p_numeroMes
+			WHEN 1 THEN
+					SET v_nombre = "Enero";
+			WHEN 2 THEN
+					SET v_nombre = "Febrero";
+			WHEN 3 THEN
+					SET v_nombre = "Marzo";
+			WHEN 4 THEN
+					SET v_nombre = "Abril";
+			WHEN 5 THEN
+					SET v_nombre = "Mayo";
+			WHEN 6 THEN
+					SET v_nombre = "Junio";
+			WHEN 7 THEN
+					SET v_nombre = "Julio";
+			WHEN 8 THEN
+					SET v_nombre = "Agosto";
+			WHEN 9 THEN
+					SET v_nombre = "Septiembre";
+			WHEN 10 THEN
+					SET v_nombre = "Octubre";
+			WHEN 11 THEN
+					SET v_nombre = "Noviembre";
+			WHEN 12 THEN
+					SET v_nombre = "Diciembre";
+			ELSE
+				SET v_nombre = NULL;
+		END CASE;
+	ELSEIF p_lengua = "VAL" THEN
+		CASE p_numeroMes
+			WHEN 1 THEN
+					SET v_nombre = "Gener";
+			WHEN 2 THEN
+					SET v_nombre = "Febrer";
+			WHEN 3 THEN
+					SET v_nombre = "Març";
+			WHEN 4 THEN
+					SET v_nombre = "Abril";
+			WHEN 5 THEN
+					SET v_nombre = "Maig";
+			WHEN 6 THEN
+					SET v_nombre = "Juny";
+			WHEN 7 THEN
+					SET v_nombre = "Juliol";
+			WHEN 8 THEN
+					SET v_nombre = "Agost";
+			WHEN 9 THEN
+					SET v_nombre = "Setembre";
+			WHEN 10 THEN
+					SET v_nombre = "Octubre";
+			WHEN 11 THEN
+					SET v_nombre = "Novembre";
+			WHEN 12 THEN
+					SET v_nombre = "Decembre";
+			ELSE
+				SET v_nombre = NULL;
+		END CASE;
+	ELSE
+		SET v_nombre = NULL;
+    END IF;
+    
+	RETURN v_nombre;
+END$$
+*/
+-- 17B. Añadir al ejercicio anterior la opción de pasar lengua ING, que devolverá
+-- el nombre del mes usando una función nativa de MySQL.
+/*
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS nombre_mes_cv$$
+
+CREATE FUNCTION nombre_mes_cv (
+	p_numeroMes INT(2),
+    p_lengua VARCHAR(3)
+) RETURNS VARCHAR(50)
+
+BEGIN
+	DECLARE v_nombre VARCHAR(50);
+    
+    IF p_lengua = "CAS" THEN
+		CASE p_numeroMes
+			WHEN 1 THEN
+					SET v_nombre = "Enero";
+			WHEN 2 THEN
+					SET v_nombre = "Febrero";
+			WHEN 3 THEN
+					SET v_nombre = "Marzo";
+			WHEN 4 THEN
+					SET v_nombre = "Abril";
+			WHEN 5 THEN
+					SET v_nombre = "Mayo";
+			WHEN 6 THEN
+					SET v_nombre = "Junio";
+			WHEN 7 THEN
+					SET v_nombre = "Julio";
+			WHEN 8 THEN
+					SET v_nombre = "Agosto";
+			WHEN 9 THEN
+					SET v_nombre = "Septiembre";
+			WHEN 10 THEN
+					SET v_nombre = "Octubre";
+			WHEN 11 THEN
+					SET v_nombre = "Noviembre";
+			WHEN 12 THEN
+					SET v_nombre = "Diciembre";
+			ELSE
+				SET v_nombre = NULL;
+		END CASE;
+	ELSEIF p_lengua = "VAL" THEN
+		CASE p_numeroMes
+			WHEN 1 THEN
+					SET v_nombre = "Gener";
+			WHEN 2 THEN
+					SET v_nombre = "Febrer";
+			WHEN 3 THEN
+					SET v_nombre = "Març";
+			WHEN 4 THEN
+					SET v_nombre = "Abril";
+			WHEN 5 THEN
+					SET v_nombre = "Maig";
+			WHEN 6 THEN
+					SET v_nombre = "Juny";
+			WHEN 7 THEN
+					SET v_nombre = "Juliol";
+			WHEN 8 THEN
+					SET v_nombre = "Agost";
+			WHEN 9 THEN
+					SET v_nombre = "Setembre";
+			WHEN 10 THEN
+					SET v_nombre = "Octubre";
+			WHEN 11 THEN
+					SET v_nombre = "Novembre";
+			WHEN 12 THEN
+					SET v_nombre = "Decembre";
+			ELSE
+				SET v_nombre = NULL;
+		END CASE;
+	ELSEIF p_lengua = "ING" THEN
+		SET v_nombre = monthname(str_to_date(p_numeroMes, "%m"));
+	ELSE
+		SET v_nombre = NULL;
+    END IF;
+    
+	RETURN v_nombre;
+END$$
+*/
