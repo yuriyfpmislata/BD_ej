@@ -65,6 +65,79 @@ BEGIN
 	);
 END$$
 */
+-- 12.  Crea una tabla llamada log_altas_clientes que contendrá un número de orden,
+-- código cliente, usuario (que lo ha creado), fecha-hora. Esta tabla se rellenará
+-- automáticamente con cada inserción en la tabla de clientes.
+/*
+CREATE TABLE IF NOT EXISTS log_altas_clientes (
+	orden INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	codCliente INT(11),
+	usuario VARCHAR(100),
+	fechaHora DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER $$
+CREATE TRIGGER alInsertarCliente AFTER INSERT ON clientes
+FOR EACH ROW 
+BEGIN    
+	INSERT INTO log_altas_clientes (codCliente, usuario) VALUES (
+		NEW.CodigoCliente,
+        CURRENT_USER
+    );    
+END$$
+
+*/
+-- 13.  Crea una tabla llamada log_bajas_clientes que contendrá un número de orden,
+-- código cliente, usuario (que lo ha borrado), fecha-hora. Esta tabla se rellenará
+-- automáticamente con cada borrado en la tabla de clientes.
+/*
+CREATE TABLE IF NOT EXISTS log_bajas_clientes (
+	orden INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	codCliente INT(11),
+	usuario VARCHAR(100),
+	fechaHora DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER $$
+CREATE TRIGGER alBorrarCliente AFTER DELETE ON clientes
+FOR EACH ROW 
+BEGIN    
+	INSERT INTO log_bajas_clientes (codCliente, usuario) VALUES (
+		OLD.CodigoCliente,
+        CURRENT_USER
+    );    
+END$$
+
+*/
+-- 14.  Crea una tabla llamada log_modifica_clientes que contendrá un número de orden,
+-- código cliente, nombre cliente antes de la modificación, nuevo nombre, usuario 
+-- (que lo ha modificado), fecha-hora. Esta tabla se rellenará automáticamente con 
+-- cada modificación del campo nombre en la tabla de clientes.
+/*
+CREATE TABLE IF NOT EXISTS log_modifica_clientes (
+	orden INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	codCliente INT(11),
+    nombreAnterior VARCHAR(50),
+    nombreNuevo VARCHAR(50),
+	usuario VARCHAR(100),
+	fechaHora DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER $$
+CREATE TRIGGER alModificarCliente AFTER UPDATE ON clientes
+FOR EACH ROW 
+BEGIN
+	IF NEW.NombreCliente <> OLD.NombreCliente
+    THEN
+		INSERT INTO log_modifica_clientes (codCliente, nombreAnterior, nombreNuevo, usuario) VALUES (
+			OLD.CodigoCliente,
+			OLD.NombreCliente,
+			NEW.NombreCliente,
+			CURRENT_USER
+		);
+	END IF;
+END$$
+*/
 -- 15.   Crea una función llamada calificación, que a partir de una nota numérica,
 -- devuelva la calificación alfabética
 /*
