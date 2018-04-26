@@ -631,3 +631,32 @@ BEGIN
     COMMIT;
 END$$
 */
+-- 34.  Similar al ejercicio anterior, diseña una BD llamada RED_SOCIAL,
+-- en la que los usuarios identificados por un nick único establezcan relaciones
+-- de seguimiento (un usuario es seguido por muchos usuarios, y un usuario es
+-- seguidor de muchos usuarios). Debemos almacenar por cada usuario y mantener
+-- permanentemente actualizados dos datos: “número de usuarios seguidores” y
+-- “número de usuarios seguidos”.
+/*
+CREATE DEFINER=`root`@`localhost` TRIGGER `red_social`.`seguimientos_BEFORE_INSERT` AFTER INSERT ON `seguimientos` FOR EACH ROW
+BEGIN
+	UPDATE usuarios 
+		SET seguidores = seguidores + 1
+		WHERE nick = NEW.nickSeguido;
+    
+	UPDATE usuarios 
+		SET seguidos = seguidos + 1
+		WHERE nick = NEW.nickSeguidor;
+END
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `red_social`.`seguimientos_BEFORE_DELETE` AFTER DELETE ON `seguimientos` FOR EACH ROW
+BEGIN
+	UPDATE usuarios 
+		SET seguidores = seguidores - 1
+		WHERE nick = OLD.nickSeguido;
+    
+	UPDATE usuarios 
+		SET seguidos = seguidos - 1
+		WHERE nick = OLD.nickSeguidor;
+END
+*/
