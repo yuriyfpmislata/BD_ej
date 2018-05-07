@@ -631,6 +631,87 @@ BEGIN
     COMMIT;
 END$$
 */
+-- 25.  La empresa de jardinería va a internacionalizarse y ha decidido inutilizar el campo apellido2 de la tabla empleados.
+-- El objetivo es conseguir que los dos apellidos de los empleados se almacenen en el campo apellido1, quedando sin uso el campo apellido2. 
+-- Se trata de que enumeres qué habría que hacer para conseguir este objetivo sin alterar la estructura de la tabla empleados
+-- y sin modificar ninguna de las aplicaciones que pudieran tener acceso a ella.
+/*
+DELIMITER $$
+CREATE TRIGGER actualizarApellidos_insert BEFORE INSERT ON empleados
+FOR EACH ROW
+BEGIN
+	IF NEW.Apellido2 IS NOT NULL
+    THEN
+		SET NEW.Apellido1 = concat(NEW.Apellido1, " ", NEW.Apellido2);
+		SET NEW.Apellido2 = NULL;
+    END IF;
+END$$
+
+DELIMITER $$
+CREATE TRIGGER actualizarApellidos_update BEFORE UPDATE ON empleados
+FOR EACH ROW
+BEGIN
+	IF NEW.Apellido2 IS NOT NULL
+    THEN
+		SET NEW.Apellido1 = concat(NEW.Apellido1, " ", NEW.Apellido2);
+		SET NEW.Apellido2 = NULL;
+    END IF;
+END$$
+
+UPDATE empleados
+SET
+	Apellido1 = concat(Apellido1, " ", Apellido2),
+	Apellido2 = NULL
+WHERE
+	Apellido2 IS NULL;
+*/
+-- 33.  Crea una nueva BD llamada BANCO con los siguientes requisitos:
+-- Se almacenarán los titulares, identificados por el DNI, con su nombre y fecha de nacimiento. Los titulares tienen una o varias cuentas que se caracterizan por un número identificativo. Cada cuenta pertenece a un solo titular. Se producen movimientos de dinero identificados por un número, de los que hay que almacenar la fecha/hora en que se producen, el concepto y el importe (todos estos campos son obligatorios y el importe puede ser positivo o negativo con dos decimales). Una cuenta puede tener muchos movimientos pero cada movimiento solo pertenece a una cuenta.
+-- Por razones de rendimiento y velocidad de respuesta,  por cada cuenta se desea almacenar el saldo, que es una dato calculado como suma de los importes de todos los movimientos de dicha cuenta.
+-- Diseña la BD (modelo E/R y modelo relacional), impleméntala en MySQL y desarrolla lo necesario para que el campo SALDO de cada cuenta esté permanentemente actualizado a partir de sus movimientos.  Además estudia qué se puede hacer para que el campo saldo no esté accesible a modificación por los usuarios.
+/*
+DELIMITER $$
+CREATE TRIGGER actualizarSaldo_insertar AFTER INSERT ON movimientos
+FOR EACH ROW
+BEGIN
+	UPDATE cuentas
+    SET
+		saldo = saldo + NEW.importe
+	WHERE
+		id = NEW.numCuenta;
+END$$
+
+DELIMITER $$
+CREATE TRIGGER actualizarSaldo_borrar AFTER DELETE ON movimientos
+FOR EACH ROW
+BEGIN
+	UPDATE cuentas
+    SET
+		saldo = saldo - OLD.importe
+	WHERE
+		id = OLD.numCuenta;
+END$$
+
+DELIMITER $$
+CREATE TRIGGER actualizarSaldo_actualizar AFTER UPDATE ON movimientos
+FOR EACH ROW
+BEGIN
+	IF OLD.importe <> NEW.importe OR OLD.numCuenta <> NEW.numCuenta
+    THEN
+		UPDATE cuentas
+		SET
+			saldo = saldo - OLD.importe
+		WHERE
+			id = OLD.numCuenta;
+			
+		UPDATE cuentas
+		SET
+			saldo = saldo + NEW.importe
+		WHERE
+			id = NEW.numCuenta;
+	END IF;
+END$$
+*/
 -- 34.  Similar al ejercicio anterior, diseña una BD llamada RED_SOCIAL,
 -- en la que los usuarios identificados por un nick único establezcan relaciones
 -- de seguimiento (un usuario es seguido por muchos usuarios, y un usuario es
