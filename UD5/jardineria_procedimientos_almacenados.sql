@@ -741,3 +741,42 @@ BEGIN
 		WHERE nick = OLD.nickSeguidor;
 END
 */
+-- Mandado en clase. En la BD jardineria genera una funcion llamada "crear_empleado", donde
+-- a partir de unos parametros inserte un nuevo empleado en la tabla empleados y
+-- que devuelva un 0 si lo ha insertado y un 1 si ya existia
+-- 	CodigoEmpleado, Nombre, Apellido1, Extension, Email, CodigoOficina
+/*
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS crear_empleado$$
+
+CREATE FUNCTION crear_empleado (
+	p_CodigoEmpleado INT(11),
+    p_Nombre VARCHAR(50),
+    p_Apellido1 VARCHAR(50),
+    p_Extension VARCHAR(10),
+    p_Email VARCHAR(100),
+    p_CodigoOficina VARCHAR(10)
+) RETURNS BOOL
+BEGIN
+	DECLARE EXIT HANDLER FOR 1062 RETURN 1;
+    
+    INSERT INTO empleados (
+		CodigoEmpleado,
+        Nombre,
+        Apellido1,
+        Extension,
+        Email,
+        CodigoOficina
+    ) VALUES (
+		p_CodigoEmpleado,
+        p_Nombre,
+        p_Apellido1,
+        p_Extension,
+        p_Email,
+        p_CodigoOficina
+    );
+    
+    RETURN 0;
+END$$
+*/
